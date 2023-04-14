@@ -1,2 +1,2 @@
-# portfolio
-A collection of all my portfolio projects
+# Portfolio
+A collection of projects I have worked on. Please feel free to browse and enjoy
