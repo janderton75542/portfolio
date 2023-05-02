@@ -13,7 +13,20 @@ FROM Cyclistic_Full_Data
 GROUP BY
 	member_casual;
 	
+
 	
+--Count how many bike rides were from each bike type
+
+SELECT
+member_casual as Type_of_Rider,
+rideable_type as bike_type,
+COUNT(ride_id) AS Total_Num_of_Rides
+
+FROM Cyclistic_Full_Data
+
+GROUP BY
+	Type_of_Rider, bike_type;
+
 	
 --Most popular day to ride a bike
 
@@ -60,13 +73,30 @@ ORDER BY
 LIMIT 10;
 	
 
--- Determine the top 10 most popular starting location for each type of rider
+-- Determine the popular locations for each type of rider
 
 SELECT
 member_casual AS type_of_member,
 start_station_name AS starting_location,
 start_lat,
 start_lng,
+COUNT(*) AS num_of_rides
+
+FROM Cyclistic_Full_Data
+
+WHERE
+	start_station_name IS NOT NULL
+	
+GROUP BY
+	member_casual, start_station_name
+	
+ORDER BY
+	member_casual, num_of_rides DESC;
+
+
+SELECT
+member_casual AS type_of_member,
+end_station_name AS ending_location,
 end_lat,
 end_lng,
 COUNT(*) AS num_of_rides
@@ -74,38 +104,13 @@ COUNT(*) AS num_of_rides
 FROM Cyclistic_Full_Data
 
 WHERE
-	start_station_name IS NOT NULL AND member_casual = "casual"
+	end_station_name IS NOT NULL
 	
 GROUP BY
-	start_station_name
+	member_casual, end_station_name
 	
 ORDER BY
-	num_of_rides DESC
-	
-LIMIT 10;
-
-
-SELECT
-member_casual AS type_of_member,
-start_station_name AS starting_location,
-start_lat,
-start_lng,
-end_lat,
-end_lng,
-COUNT(*) AS num_of_rides
-
-FROM Cyclistic_Full_Data
-
-WHERE
-	start_station_name IS NOT NULL AND member_casual != "casual"
-	
-GROUP BY
-	start_station_name
-	
-ORDER BY
-	num_of_rides DESC
-	
-LIMIT 10;
+	member_casual, num_of_rides DESC;
 	
 
 
@@ -193,6 +198,7 @@ LIMIT 20;
 	
 SELECT
 member_casual AS member_type,
+rideable_type AS type_of_bike,
 CASE
 	WHEN day_of_week = 1 THEN 'Sunday'
 	WHEN day_of_week = 2 THEN 'Monday'
@@ -202,8 +208,7 @@ CASE
 	WHEN day_of_week = 6 THEN 'Friday'
 	ELSE 'Saturday'
 END AS dayname,
-COUNT(*) AS Num_of_Trips,
-rideable_type AS type_of_bike
+COUNT(*) AS Num_of_Trips
 
 FROM Cyclistic_Full_Data
 	
@@ -211,7 +216,7 @@ GROUP BY
 	dayname, member_casual, type_of_bike
 	
 ORDER BY
-	member_casual, day_of_week, Num_of_Trips DESC;
+	member_type, type_of_bike, day_of_week, Num_of_Trips DESC;
 	
 	
 -- Most popular bike type by member type 
@@ -230,49 +235,46 @@ ORDER BY
 member_type, bike_type;
 
 
--- Determine the most popular stations for electric bikes for casual riders
+-- Determine the most popular stations by bike type
 
 SELECT
-start_station_name AS start_location,
-COUNT(*) AS num_of_rides,
+member_casual AS type_of_member,
+rideable_type AS bike_type,
+start_station_name AS starting_location,
 start_lat,
-start_lng
+start_lng,
+COUNT(*) AS num_of_rides
 
-FROM
-Cyclistic_Full_Data
-
+FROM Cyclistic_Full_Data
 
 WHERE
-rideable_type = "electric_bike" AND start_station_name IS NOT NULL AND member_casual = "casual"
-
+	start_station_name IS NOT NULL
+	
 GROUP BY
-start_location
-
+	member_casual, bike_type, start_station_name
+	
 ORDER BY
-num_of_rides DESC;
-
-
-
+	member_casual, bike_type, num_of_rides DESC;
 
 
 SELECT
-end_station_name AS end_location,
-COUNT(*) AS num_of_rides,
+member_casual AS type_of_member,
+rideable_type AS bike_type,
+end_station_name AS ending_location,
 end_lat,
-end_lng
+end_lng,
+COUNT(*) AS num_of_rides
 
-FROM
-Cyclistic_Full_Data
-
+FROM Cyclistic_Full_Data
 
 WHERE
-rideable_type = "electric_bike" AND end_station_name IS NOT NULL AND member_casual = "casual"
-
+	end_station_name IS NOT NULL
+	
 GROUP BY
-end_location
-
+	member_casual, bike_type, end_station_name
+	
 ORDER BY
-num_of_rides DESC;
+	member_casual, bike_type, num_of_rides DESC;
 
 
 
